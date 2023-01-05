@@ -1,11 +1,11 @@
 import React, {useContext, useEffect, useState} from "react"
-import { Link } from 'react-router-dom';
 import { useParams} from "react-router-dom";
 import axios from "axios";
 
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {AuthContext} from "../context";
 
@@ -15,7 +15,7 @@ export default function Articles() {
     const {id} = useParams()
 
     const [data, setData] = useState([])
-    async function fetchSubjects() {
+    async function fetchSubjects() {  // Using local server django rest api
         const response = await axios.get('http://127.0.0.1:8000/api/articles/')
         console.log(response.data)
         setData(response.data)
@@ -28,6 +28,12 @@ export default function Articles() {
     )
 
     console.log(data)
+
+    const [cart, setCart] = useState([]);
+    const handleClick = (article) => {
+        cart.push(article);
+        console.log(cart);
+    }
 
     return (
         <div>
@@ -52,7 +58,10 @@ export default function Articles() {
                                 <Card.Text>
                                     {article.title}
                                 </Card.Text>
-                                <Button variant="primary">Buy this article</Button>
+                                <ListGroup.Item>{article.price} $</ListGroup.Item>
+                                <Button variant="primary" onClick={()=>handleClick(article)}>
+                                    Buy this article
+                                </Button>
                             </Card.Body>
                         </Card>
                     )
