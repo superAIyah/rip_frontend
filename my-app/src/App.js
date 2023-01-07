@@ -11,6 +11,10 @@ import Button from "react-bootstrap/Button";
 
 function App() {
     const  [isAuth, setIsAuth] = useState(false);
+
+    const [cart, setCart] = useState([]);
+
+
     return (
         <AuthContext.Provider value = {{
             isAuth,

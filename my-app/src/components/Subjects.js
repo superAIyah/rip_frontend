@@ -6,7 +6,7 @@ export default function Subjects(){
 
     const [data, setData] = useState([])
     async function fetchSubjects() {
-        const response = await axios.get('http://127.0.0.1:8000/api/subjects/')
+        const response = await axios.get('/api/subjects/')
         console.log(response.data)
         setData(response.data)
     }

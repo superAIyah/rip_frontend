@@ -11,12 +11,11 @@ import {AuthContext} from "../context";
 
 export default function Articles() {
     const {isAuth, setIsAuth} = useContext(AuthContext);
-    console.log(isAuth)
     const {id} = useParams()
 
     const [data, setData] = useState([])
     async function fetchSubjects() {  // Using local server django rest api
-        const response = await axios.get('http://127.0.0.1:8000/api/articles/')
+        const response = await axios.get('/api/articles/')
         console.log(response.data)
         setData(response.data)
     }
@@ -27,12 +26,10 @@ export default function Articles() {
         }, []
     )
 
-    console.log(data)
-
-    const [cart, setCart] = useState([]);
-    const handleClick = (article) => {
-        cart.push(article);
-        console.log(cart);
+    async function handleClick(article) {
+        await axios.patch('/api/articles/'+article.id+'/', {
+            "cart" : true
+        })
     }
 
     return (
