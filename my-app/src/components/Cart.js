@@ -34,6 +34,8 @@ function KitchenSinkExample() {
         const arr = data
         arr[ind].cart = false
 
+        const new_price = sum - arr[ind].price
+        setSum(new_price)
         setData([...arr])
     }
 
