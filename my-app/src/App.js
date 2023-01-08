@@ -8,12 +8,30 @@ import Cart from "./components/Cart";
 import ListGroup from "react-bootstrap/ListGroup";
 import {AuthContext} from "./context/index"
 import Button from "react-bootstrap/Button";
+import axios from "axios";
 
 function App() {
     const  [isAuth, setIsAuth] = useState(false);
 
-    const [cart, setCart] = useState([]);
+    // Cart state cmponents
+    const [data, setData] = useState([])
+    const [sum, setSum] = useState(0);
 
+    async function handleOut() {
+        const response = await axios.get('/api/articles/')
+        const data = response.data
+        for (const article of data) {
+            if (article.cart === true) {
+                axios.patch('/api/articles/'+article.id+'/', {
+                    "cart" : false
+                })
+                article.cart = false;
+            }
+            console.log(data)
+        }
+        setData([...data])
+        setSum(0)
+    }
 
     return (
         <AuthContext.Provider value = {{
@@ -29,9 +47,17 @@ function App() {
                       <ListGroup.Item action href="/subjects">
                           Subjects
                       </ListGroup.Item>
+                      <Button style={{ width: "15rem", height: "3rem", marginLeft: 5, marginTop: 3}}>
+                          Sign in
+                      </Button>
+                      <Button style={{ width: "15rem", height: "3rem", marginLeft: 5, marginTop: 3}}
+                              onClick={()=>handleOut()}
+                      >
+                          Sign out
+                      </Button>
                           <Button
                               action href="/cart"
-                              style={{ width: "5rem", height: "3rem"}}
+                              style={{ width: "5rem", height: "3rem", marginLeft: 5, marginRight: 5, marginTop: 3}}
                               variant="outline-primary"
                           >
                               <svg
@@ -51,7 +77,12 @@ function App() {
                     </Route>
                     <Route exact path="/subjects/:id" element={<Articles />}>
                     </Route>
-                    <Route exact path="/cart" element={<Cart />}>
+                    <Route exact path="/cart" element={<Cart
+                        data={data}
+                        setData={setData}
+                        sum={sum}
+                        setSum={setSum}
+                    />}>
                     </Route>
                 </Routes>
               </div>

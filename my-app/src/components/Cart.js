@@ -4,9 +4,9 @@ import Button from "react-bootstrap/Button";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 
-function KitchenSinkExample() {
-    const [data, setData] = useState([])
-    const [sum, setSum] = useState(0)
+function Cart({data, setData, sum, setSum}) {
+    //const [data, setData] = useState([])
+    //const [sum, setSum] = useState(0)
     async function fetchSubjects() {  // Using local server django rest api
         const response = await axios.get('/api/articles/')
         setData(response.data)
@@ -70,4 +70,4 @@ function KitchenSinkExample() {
     )
 }
 
-export default KitchenSinkExample;
+export default Cart;
