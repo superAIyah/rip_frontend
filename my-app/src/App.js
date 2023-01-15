@@ -1,13 +1,17 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import './App.css';
 import { BrowserRouter, Route, Link, Routes } from "react-router-dom";
 import Home from "./components/Home";
 import Subjects from "./components/Subjects";
 import Articles from "./components/Articles";
 import Cart from "./components/Cart";
+import Search from "./components/Search";
 import ListGroup from "react-bootstrap/ListGroup";
 import {AuthContext} from "./context/index"
 import Button from "react-bootstrap/Button";
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import MultiRangeSlider from "./components/multiRangeSlider/MultiRangeSlider";
 import axios from "axios";
 
 function App() {
@@ -15,7 +19,7 @@ function App() {
 
     // Cart state cmponents
     const [data, setData] = useState([])
-    const [sum, setSum] = useState(0);
+    const [sum, setSum] = useState(0)
 
     async function handleOut() {
         const response = await axios.get('/api/articles/')
@@ -33,6 +37,23 @@ function App() {
         setSum(0)
     }
 
+    const [minPrice, setMinPrice] = useState(0)
+    const [maxPrice, setMaxPrice] = useState(500)
+    const [searchText, setSearchText] = useState("")
+
+    function onSliderChange(min, max) {
+        setMinPrice(min)
+        setMaxPrice(max)
+    }
+
+    function onSearch() {
+        window.localStorage.setItem('minPrice', minPrice);
+        window.localStorage.setItem('maxPrice', maxPrice);
+        window.localStorage.setItem('searchText', searchText);
+
+        console.log(JSON.parse(window.localStorage.getItem('maxPrice')))
+    }
+
     return (
         <AuthContext.Provider value = {{
             isAuth,
@@ -47,17 +68,38 @@ function App() {
                       <ListGroup.Item action href="/subjects">
                           Subjects
                       </ListGroup.Item>
-                      <Button style={{ width: "15rem", height: "3rem", marginLeft: 5, marginTop: 3}}>
+                      <ListGroup.Item>
+                      <MultiRangeSlider style={{maxheight: "1rem"}}
+                        min={0}
+                        max={500}
+                        onChange={({ min, max }) => onSliderChange(min, max)}
+                      />
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                      <InputGroup className="mb-3" style={{ width: "25rem", height: "1.3em"}}>
+                        <Form.Control
+                            placeholder="Search by title"
+                            aria-label="Search by title"
+                            aria-describedby="basic-addon2"
+                            onChange={e => setSearchText(e.target.value)}
+                            type="text"
+                        />
+                        <Button onClick={()=>onSearch()} action href="/search" variant="outline-secondary" id="button-addon2">
+                            Filter search
+                        </Button>
+                      </InputGroup>
+                      </ListGroup.Item>
+                      <Button style={{ width: "25rem", height: "3.5rem", marginLeft: 5, marginTop: 3}}>
                           Sign in
                       </Button>
-                      <Button style={{ width: "15rem", height: "3rem", marginLeft: 5, marginTop: 3}}
+                      <Button style={{ width: "25rem", height: "3.5rem", marginLeft: 5, marginTop: 3}}
                               onClick={()=>handleOut()}
                       >
                           Sign out
                       </Button>
                           <Button
                               action href="/cart"
-                              style={{ width: "5rem", height: "3rem", marginLeft: 5, marginRight: 5, marginTop: 3}}
+                              style={{ width: "15rem", height: "3.5rem", marginLeft: 5, marginRight: 5, marginTop: 3}}
                               variant="outline-primary"
                           >
                               <svg
@@ -77,7 +119,13 @@ function App() {
                     </Route>
                     <Route exact path="/subjects/:id" element={<Articles />}>
                     </Route>
-                    <Route exact path="/cart" element={<Cart
+                    <Route exact path="/search" element={<Search
+                        minPrice={minPrice}
+                        maxPrice={maxPrice}
+                        searchText={searchText}
+                    />}>
+                    </Route>
+                    <Route exact path="/cart" element={<Cart 
                         data={data}
                         setData={setData}
                         sum={sum}
