@@ -8,6 +8,7 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {AuthContext} from "../context";
+import Cookies from 'js-cookie';
 
 export default function Articles() {
     const {isAuth, setIsAuth} = useContext(AuthContext);
@@ -27,9 +28,17 @@ export default function Articles() {
     )
 
     async function handleClick(article) {
+        const config = {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': Cookies.get('csrftoken')
+            }
+        };
+
         await axios.patch('/api/articles/'+article.id+'/', {
             "cart" : true
-        })
+        }, config)
     }
 
     return (

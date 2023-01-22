@@ -7,7 +7,7 @@ import { register } from '../actions/auth';
 import { connect } from 'react-redux';
 import CSRFToken from './CSRFToken';
 
-function Register({register}) {
+function Register({register, isAuthenticated}) {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -38,24 +38,29 @@ function Register({register}) {
         <Form onSubmit={e => onSubmit(e)}
         style = {{marginLeft : "3em", marginRight: "5em"}}>
         <CSRFToken/>
+        <h1>Register for an Account</h1>
         <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Username</Form.Label>
-            <Form.Control type="text" placeholder="Enter username" name = "username" onChange={e => onChange(e)}/>
+            <Form.Control type="text" placeholder="Enter username" name = "username" value={username} onChange={e => onChange(e)}/>
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="formBasicPassword" name = "password" onChange={e => onChange(e)}>
+        <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" onChange={e => onChange(e)}/>
+            <Form.Control type="password" placeholder="Password" name = "password" value={password} onChange={e => onChange(e)}/>
         </Form.Group>
-        <Form.Group className="mb-3" controlId="formBasicRePassword" name = "re_password" onChange={e => onChange(e)}>
+        <Form.Group className="mb-3" controlId="formBasicRePassword">
             <Form.Label>Confirm password</Form.Label>
-            <Form.Control type="password" placeholder="Password" />
+            <Form.Control type="password" placeholder="Password"  name = "re_password" value={re_password} onChange={e => onChange(e)}/>
         </Form.Group>
         <Button variant="primary" type="submit">
-            Submit
+            Register
         </Button>
         </Form>
   );
 }
 
-export default connect(null, {register})(Register);
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapStateToProps, {register})(Register);

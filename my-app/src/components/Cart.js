@@ -3,6 +3,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Button from "react-bootstrap/Button";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 function Cart({data, setData, sum, setSum}) {
     //const [data, setData] = useState([])
@@ -27,9 +28,17 @@ function Cart({data, setData, sum, setSum}) {
     )
 
     function handleClick(article) {
+        const config = {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': Cookies.get('csrftoken')
+            }
+        };
+
         axios.patch('/api/articles/'+article.id+'/', {
             "cart" : false
-        })
+        }, config)
         const ind = data.indexOf(article)
         const arr = data
         arr[ind].cart = false
